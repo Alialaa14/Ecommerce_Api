@@ -1,0 +1,6 @@
+/*
+    WISHLIST CONTROLER 
+
+    -- ADD TO CART 
+    -- REMOVE FROM CART
+*/

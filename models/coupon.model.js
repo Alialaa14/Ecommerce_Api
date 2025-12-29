@@ -1,0 +1,7 @@
+/*
+    COUPON MODELING 
+    -- COUPON NAME OF CODE 
+    -- DISCOUNT
+    -- USER 
+    -- EXPIRY DATE
+*/

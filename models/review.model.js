@@ -1,0 +1,8 @@
+/*
+    REVIEW MODELING 
+    -- USER 
+    -- TITLE OF REVIEW 
+    -- CONTENT OF REVIEW (TEXT)
+    -- RATING 
+    -- PICS UPLOAD
+*/
