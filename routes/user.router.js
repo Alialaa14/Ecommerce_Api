@@ -16,18 +16,24 @@ import {
   verifyOtpValidator,
 } from "../validators/user.validator.js";
 
-import { UserImage } from "../utils/multer.js";
+import { ImageUpload } from "../utils/multer.js";
 import { isAuthenticated } from "../middlewares/isAuthenticated.js";
+import { isAuthorized } from "../middlewares/isAuthorized.js";
 const router = Router();
 
 router
-  .post("/register", UserImage.single("image"), registerValidator, register)
+  .post("/register", ImageUpload.single("image"), registerValidator, register)
   .post("/login", loginValidator, login)
   .post("/logout", logout)
   .post("/forget-password", forgetPasswordValidator, forgetPassword)
   .post("/verify-otp", verifyOtpValidator, verifyPasswordOtp)
   .post("/reset-password", resetPassword)
   .post("/veriftion-otp", isAuthenticated, accountVerificationOtp)
-  .post("/verify-account", isAuthenticated, verifyAccount);
+  .post(
+    "/verify-account",
+    isAuthenticated,
+    isAuthorized("user"),
+    verifyAccount
+  );
 
 export default router;

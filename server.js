@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { globalError } from "./middlewares/errorMiddlewares.js";
 import userRouter from "./routes/user.router.js";
+import categoryRouter from "./routes/category.router.js";
 
 const app = express();
 app.use(cors());
@@ -12,6 +13,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/v1/auth/user", userRouter);
+app.use("/api/v1/category", categoryRouter);
 
 app.use(globalError);
 
