@@ -79,15 +79,15 @@ export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const isEmailExisted = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if (!isEmailExisted)
+    if (!user)
       return res
         .status(400)
         .json({ success: false, message: "This Email Doesn't Existed " });
 
     // VERIFY PASSWORD
-    const comparePassword = bcrypt.compare(password, isEmailExisted.password);
+    const comparePassword = bcrypt.compare(password, user.password);
 
     if (!comparePassword)
       return res
@@ -95,7 +95,7 @@ export const login = async (req, res, next) => {
         .json({ success: false, message: "Password Doesn't Match" });
 
     // GENERATE JWT
-    const token = jwt.sign({ user: isEmailExisted }, ENV.SECRET_KEY, {
+    const token = jwt.sign({ user }, ENV.SECRET_KEY, {
       expiresIn: 3 * 1000 * 60 * 60 * 24,
     });
     res.cookie("token", token, { maxAge: 3 * 1000 * 60 * 60 * 24 });
@@ -103,7 +103,7 @@ export const login = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "User Logged Successfully",
-      data: isEmailExisted,
+      data: user,
     });
   } catch (error) {
     return next(new CustomError(500, error));
