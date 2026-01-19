@@ -19,6 +19,7 @@ import jwt from "jsonwebtoken";
 import { ENV } from "../utils/ENV.js";
 import cloudinary from "../utils/cloudinary.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import Cart from "../models/cart.model.js";
 export const register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -53,6 +54,16 @@ export const register = async (req, res, next) => {
         url: result.secure_url,
       },
     });
+
+    // CREATE CART
+    const cart = await Cart.create({
+      user: user.id,
+    });
+
+    if (!cart)
+      return res
+        .status(400)
+        .json({ success: false, message: "We Couldn't Create Cart" });
 
     // GENRATE JSONWEBTOKEN
     const token = jwt.sign({ user }, ENV.SECRET_KEY, {

@@ -4,6 +4,7 @@ import { isAuthorized } from "../middlewares/isAuthorized.js";
 import {
   createCoupon,
   deleteCoupon,
+  getCoupon,
   getCoupons,
   updateCoupon,
 } from "../services/coupon.controler.js";
@@ -38,6 +39,7 @@ router
     isAuthorized("admin"),
     deleteCouponValidator,
     deleteCoupon
-  );
+  )
+  .get(isAuthenticated, isAuthorized("admin"), getCoupon);
 
 export default router;

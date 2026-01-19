@@ -13,6 +13,7 @@ import Product from "../models/product.model.js";
 import CustomError from "../utils/Custom-Api-error.js";
 import cloudinary from "../utils/cloudinary.js";
 import Variant from "../models/variant.model.js";
+import Review from "../models/review.model.js";
 export const createProduct = async (req, res, next) => {
   try {
     const { name, description, subcategory, price, variant } = req.body;
@@ -88,11 +89,11 @@ export const createProduct = async (req, res, next) => {
 
     // CHECK THE VARIANT EXISTED OR NOT
     const existingVariant = await Variant.findOne({
-      $and: {
-        product: existingProduct._id,
-        color: variant.color,
-        sizes: variant.sizes,
-      },
+      $and: [
+        { product: existingProduct._id },
+        { color: variant.color },
+        { sizes: variant.sizes },
+      ],
     });
     // IF NOT → CREATE NEW VARIANT
     if (!existingVariant) {
@@ -118,7 +119,7 @@ export const createProduct = async (req, res, next) => {
           const { public_id, secure_url } = await cloudinary.uploader.upload(
             img.path,
             {
-              folder: `${newProduct._id}-${newVariant._id}-${variant.color.name}`,
+              folder: `${existingProduct._id}-${newVariant._id}-${variant.color.name}`,
             }
           );
 
@@ -256,6 +257,25 @@ export const deleteProduct = async (req, res, next) => {
     }
 
     const product = await Product.findByIdAndDelete(id);
+
+    if (!product) {
+      return res
+        .status(400)
+        .json({ success: false, message: "We couldn't find the Product" });
+    }
+
+    product.variants.forEach(async (variant) => {
+      await Variant.findByIdAndDelete(variant._id);
+    });
+
+    product.reviews.forEach(async (review) => {
+      await Review.findByIdAndDelete(review._id);
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Product Deleted Successfully",
+    });
   } catch (error) {
     return next(new CustomError(500, error.message));
   }
